@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -221,56 +222,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //Fazer login
             RequestQueue queue = Volley.newRequestQueue(this);
             String url = getString(R.string.host) + "/api/v1/login";
-            final StringRequest jsonObjRequest = new StringRequest(Request.Method.POST,
-                    url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jObj = new JSONObject(response);
-                                boolean status = jObj.getBoolean("status");
-                                if(status){
-                                    usuario.setNome(jObj.getString("nome"));
-                                    usuario.setEmail(jObj.getString("email"));
-                                    usuario.setMatricula(jObj.getString("matricula"));
-                                    usuario.setIdSessao(jObj.getString("idSessao"));
-
-                                    startActivity(new Intent(getApplicationContext(),TelaPrincipalActivity.class).putExtra("Usuario",(Parcelable) usuario));
-                                    finish();
-                                }else{
-                                    mAuthTask = null;
-                                    showProgress(false);
-                                    mPasswordView.setError(jObj.getString("msg"));
-                                    mPasswordView.requestFocus();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
+            String contentType = "application/x-www-form-urlencoded; charset=UTF-8";
+            final ConexaoDAO conexaoDAO = new ConexaoDAO(this,url);
+            conexaoDAO.setParams("email",mEmailView.getText().toString());
+            conexaoDAO.setParams("password",mPasswordView.getText().toString());
+            conexaoDAO.setHeader("Content-Type",contentType);
+            conexaoDAO.executeRequest(Request.Method.POST, new ConexaoDAO.VolleyCallback() {
+                @Override
+                public void getResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean status = jObj.getBoolean("status");
+                        if(status){
+                            usuario.setNome(jObj.getString("nome"));
+                            usuario.setEmail(jObj.getString("email"));
+                            usuario.setMatricula(jObj.getString("matricula"));
+                            usuario.setIdSessao(jObj.getString("idSessao"));
+                            SharedPreferences.Editor editor = getSharedPreferences("pref", MODE_PRIVATE).edit();
+                            editor.putString("nome",jObj.getString("nome"));
+                            editor.putString("email",jObj.getString("email"));
+                            editor.putString("matricula",jObj.getString("matricula"));
+                            editor.putString("idSessao",jObj.getString("idSessao"));
+                            editor.commit();
+                            startActivity(new Intent(getApplicationContext(),TelaPrincipalActivity.class).putExtra("Usuario",(Parcelable) usuario));
+                            finish();
+                        }else{
+                            mAuthTask = null;
+                            showProgress(false);
+                            mPasswordView.setError(jObj.getString("msg"));
+                            mPasswordView.requestFocus();
                         }
-                    }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                    Log.i("MSG",error.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }){
-                @Override
-                public String getBodyContentType() {
-                    return "application/x-www-form-urlencoded; charset=UTF-8";
-                }
-
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("email", mEmailView.getText().toString());
-                    params.put("password", mPasswordView.getText().toString());
-                    return params;
-                }
-
-            };
-            queue.add(jsonObjRequest);
+            });
         }
     }
 

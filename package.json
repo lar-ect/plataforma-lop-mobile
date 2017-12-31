@@ -1,0 +1,27 @@
+{
+  "name": "lopalpha",
+  "version": "1.0.0",
+  "description": "Repositório criado para aplicações mobile da plataforma lop.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lar-ect/plataforma-lop-mobile.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lar-ect/plataforma-lop-mobile/issues"
+  },
+  "homepage": "https://github.com/lar-ect/plataforma-lop-mobile#readme",
+  "devDependencies": {
+    "cz-ptbr-changelog": "^1.0.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-ptbr-changelog"
+    }
+  }
+}

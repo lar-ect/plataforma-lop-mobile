@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -233,6 +234,64 @@ public class Cadastrar extends AppCompatActivity implements LoaderCallbacks<Curs
             RequestQueue queue = Volley.newRequestQueue(this);
             final RequestQueue queue1 = Volley.newRequestQueue(this);
             String url =getString(R.string.host)+ "/api/v1/cadastro";
+            String url1 =getString(R.string.host)+ "/api/v1/login";
+            String contentType = "application/x-www-form-urlencoded; charset=UTF-8";
+            final ConexaoDAO conexaoDAO = new ConexaoDAO(this,url);
+            final ConexaoDAO conexaoDAO1 = new ConexaoDAO(this,url1);
+            conexaoDAO.setParams("nome",mNomeView.getText().toString());
+            conexaoDAO.setParams("email", mEmailView.getText().toString());
+            conexaoDAO.setParams("matricula",mMatriculaView.getText().toString());
+            conexaoDAO.setParams("password",mPasswordView.getText().toString());
+            conexaoDAO.setParams("password-confirm",mPassword2View.getText().toString());
+            conexaoDAO.setHeader("Content-Type",contentType);
+            conexaoDAO.executeRequest(Request.Method.POST, new ConexaoDAO.VolleyCallback() {
+                @Override
+                public void getResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean status = jObj.getBoolean("status");
+                        if(status){
+                            String contentType1 = "application/x-www-form-urlencoded; charset=UTF-8";
+                            conexaoDAO1.setHeader("Content-Type",contentType1);
+                            conexaoDAO1.setParams("nome",mNomeView.getText().toString());
+                            conexaoDAO1.setParams("password", mPasswordView.getText().toString());
+                            conexaoDAO1.executeRequest(Request.Method.POST, new ConexaoDAO.VolleyCallback() {
+                                @Override
+                                public void getResponse(String response) {
+                                    final User usuario = new User();
+                                    try {
+                                        JSONObject jObj = new JSONObject(response);
+                                        boolean status = jObj.getBoolean("status");
+                                        if(status){
+                                            usuario.setNome(jObj.getString("nome"));
+                                            usuario.setEmail(jObj.getString("email"));
+                                            usuario.setMatricula(jObj.getString("matricula"));
+                                            usuario.setIdSessao(jObj.getString("idSessao"));
+                                            SharedPreferences.Editor editor = getSharedPreferences("pref", MODE_PRIVATE).edit();
+                                            editor.putString("nome",jObj.getString("nome"));
+                                            editor.putString("email",jObj.getString("email"));
+                                            editor.putString("matricula",jObj.getString("matricula"));
+                                            editor.putString("idSessao",jObj.getString("idSessao"));
+                                            editor.commit();
+
+                                            startActivity(new Intent(getApplicationContext(),TelaPrincipalActivity.class).putExtra("Usuario",(Parcelable) usuario));
+                                            finish();
+                                        }else{
+                                            mAuthTask = null;
+                                            showProgress(false);
+                                            Toast.makeText(Cadastrar.this, "Problema no cadastro.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    }catch(JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             final StringRequest jsonObjRequest = new StringRequest(Request.Method.POST,
                     url,
                     new Response.Listener<String>() {
@@ -264,6 +323,13 @@ public class Cadastrar extends AppCompatActivity implements LoaderCallbacks<Curs
                                                             usuario.setEmail(jObj.getString("email"));
                                                             usuario.setMatricula(jObj.getString("matricula"));
                                                             usuario.setIdSessao(jObj.getString("idSessao"));
+                                                            SharedPreferences.Editor editor = getSharedPreferences("pref", MODE_PRIVATE).edit();
+                                                            editor.putString("nome",jObj.getString("nome"));
+                                                            editor.putString("email",jObj.getString("email"));
+                                                            editor.putString("matricula",jObj.getString("matricula"));
+                                                            editor.putString("idSessao",jObj.getString("idSessao"));
+                                                            editor.commit();
+
                                                             startActivity(new Intent(getApplicationContext(),TelaPrincipalActivity.class).putExtra("Usuario",(Parcelable) usuario));
                                                             finish();
                                                         }else{

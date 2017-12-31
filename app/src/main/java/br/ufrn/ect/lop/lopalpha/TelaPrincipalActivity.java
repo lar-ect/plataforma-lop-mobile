@@ -15,6 +15,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TelaPrincipalActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -81,11 +92,33 @@ public class TelaPrincipalActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        Intent i = getIntent();
+        User usuario = (User) i.getParcelableExtra("Usuario");
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_sair) {
+            String url = getString(R.string.host) + "/api/v1/finalizar-session";
+            String contentType = "application/x-www-form-urlencoded; charset=UTF-8";
+            final ConexaoDAO conexaoDAO = new ConexaoDAO(this,url);
+            conexaoDAO.setParams("id",usuario.getIdSessao());
+            conexaoDAO.setHeader("Content-Type",contentType);
+            conexaoDAO.executeRequest(Request.Method.POST, new ConexaoDAO.VolleyCallback() {
+                @Override
+                public void getResponse(String response) {
+                    try{
+                        JSONObject jObj = new JSONObject(response);
+                        boolean status = jObj.getBoolean("status");
+                        if(status){
+                            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                        }else{
+                            Toast.makeText(TelaPrincipalActivity.this,jObj.getString("msg"), Toast.LENGTH_SHORT).show();
+                        }
+                    }catch (JSONException e){
+                        Toast.makeText(TelaPrincipalActivity.this, "Problema ao finalizar sessão.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
 
         return super.onOptionsItemSelected(item);
