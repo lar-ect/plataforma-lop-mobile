@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,17 +21,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TelaPrincipalActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private List<Questao> questoesList = new ArrayList<Questao>();
+    private RecyclerView recyclerView;
+    private QuestoesAdapter qAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +63,45 @@ public class TelaPrincipalActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+        qAdapter = new QuestoesAdapter(questoesList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
+        recyclerView.setAdapter(qAdapter);
+        prepareQuestoesData();
     }
+    private void prepareQuestoesData() {
+        String url = getString(R.string.host) + "/api/v1/questoes";
+        String contentType = "application/x-www-form-urlencoded; charset=UTF-8";
+        final ConexaoDAO conexaoDAO = new ConexaoDAO(this,url);
+        conexaoDAO.setHeader("Content-Type",contentType);
+        conexaoDAO.executeRequest(Request.Method.GET, new ConexaoDAO.VolleyCallback() {
+            @Override
+            public void getResponse(String response) {
+                try{
+                    Questao questao = new Questao();
+                    JSONArray data = new JSONArray(response);
+                    JSONObject qData;
+                    for(int i=0; i<data.length();i++){
 
+                        qData = data.getJSONObject(i);
+                        Log.i("msg",qData.getString("titulo"));
+                        questao = new Questao(qData.getString("_id"),qData.getString("titulo"),qData.getString("dificuldade")
+                                ,qData.getString("enunciado"));
+                        questoesList.add(questao);
+
+                    }
+                    qAdapter.notifyDataSetChanged();
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -132,7 +173,7 @@ public class TelaPrincipalActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
