@@ -1,7 +1,12 @@
 package br.ufrn.ect.lop.lopalpha;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -42,7 +47,7 @@ public class TelaPrincipalActivity extends AppCompatActivity
         User usuario = (User) i.getParcelableExtra("Usuario");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +56,7 @@ public class TelaPrincipalActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
+        */
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -62,16 +67,27 @@ public class TelaPrincipalActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        /*
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
         qAdapter = new QuestoesAdapter(questoesList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         recyclerView.setAdapter(qAdapter);
-        prepareQuestoesData();
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Questao questao = questoesList.get(position);
+                Toast.makeText(getApplicationContext(), questao.getId() + " is selected!", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+        prepareQuestoesData();*/
     }
     private void prepareQuestoesData() {
         String url = getString(R.string.host) + "/api/v1/questoes";
@@ -164,7 +180,7 @@ public class TelaPrincipalActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -172,17 +188,23 @@ public class TelaPrincipalActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.listaExercico) {
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.listaLaboratorio) {
 
-        } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.provasAnteriores) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.questoes) {
+            setTitle("Questões");
+            QuestoesFragment questoesFragment = new QuestoesFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragmentPai,questoesFragment,"fragment1");
+            fragmentTransaction.commit();
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.enviarAmigo) {
+
+        } else if (id == R.id.suporte) {
 
         }
 

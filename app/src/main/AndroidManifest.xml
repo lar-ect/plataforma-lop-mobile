@@ -37,8 +37,8 @@
             android:label="@string/title_activity_recuperar_senha" />
         <activity
             android:name=".EmailEnviado"
-            android:theme="@style/AppThemePrincipal"
-            ></activity>
+            android:theme="@style/AppThemePrincipal" />
+        <activity android:name=".ExecucaoSubmissaoActivity"></activity>
     </application>
 
 </manifest>

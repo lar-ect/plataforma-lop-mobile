@@ -23,4 +23,7 @@
     <string name="esqueceuSenha">Esqueceu sua senha? <b>clique aqui</b></string>
     <string name="title_activity_cadastrar">Cadastrar</string>
     <string name="title_activity_recuperar_senha">Sign in</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
