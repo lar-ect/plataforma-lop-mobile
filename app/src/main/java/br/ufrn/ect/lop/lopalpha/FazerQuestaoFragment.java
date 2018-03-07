@@ -4,10 +4,19 @@ package br.ufrn.ect.lop.lopalpha;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.github.akshay_naik.texthighlighterapi.TextHighlighter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +43,14 @@ public class FazerQuestaoFragment extends Fragment {
     private TextView tTitulo;
     private Button executa,submeter;
     private EditText codeIDE;
+    private SpannableString text;
     private Context context;
+    private String codigo;
+    private String lastValue = "";
+    private int startChanged;
+    private int beforeChanged;
+    private int countChanged;
+
     public FazerQuestaoFragment() {
         // Required empty public constructor
     }

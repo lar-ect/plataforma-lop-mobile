@@ -67,6 +67,11 @@ public class TelaPrincipalActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        setTitle("Questões");
+        QuestoesFragment questoesFragment = new QuestoesFragment();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentPai,questoesFragment,"fragment1");
+        fragmentTransaction.commit();
         /*
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         qAdapter = new QuestoesAdapter(questoesList);
@@ -185,7 +190,12 @@ public class TelaPrincipalActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-
+        setTitle("Questões");
+        QuestoesFragment questoesFragment = new QuestoesFragment();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragmentPai,questoesFragment,"fragment1");
+        fragmentTransaction.commit();
+        /*
         int id = item.getItemId();
 
         if (id == R.id.listaExercico) {
@@ -206,7 +216,7 @@ public class TelaPrincipalActivity extends AppCompatActivity
 
         } else if (id == R.id.suporte) {
 
-        }
+        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -4,6 +4,7 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+        <!--
         <item
             android:id="@+id/listaExercico"
             android:icon="@drawable/ic_assignment_black_24dp"
@@ -16,6 +17,7 @@
             android:id="@+id/provasAnteriores"
             android:icon="@drawable/ic_loop_black_24dp"
             android:title="Provas Anteriores" />
+            -->
         <item
             android:id="@+id/questoes"
             android:icon="@drawable/ic_create_black_24dp"

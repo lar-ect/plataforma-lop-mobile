@@ -14,7 +14,7 @@
     <string name="permission_rationale">"Permissões de contato e email são necessárias."
     </string>
     <string name="title_activity_tela_principal">LoP alpha</string>
-    <string name="host">http://10.0.0.149:8080</string>
+    <string name="host">http://lop.ect.ufrn.br</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

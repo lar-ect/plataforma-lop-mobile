@@ -230,6 +230,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             conexaoDAO.executeRequest(Request.Method.POST, new ConexaoDAO.VolleyCallback() {
                 @Override
                 public void getResponse(String response) {
+
                     try {
                         JSONObject jObj = new JSONObject(response);
                         boolean status = jObj.getBoolean("status");

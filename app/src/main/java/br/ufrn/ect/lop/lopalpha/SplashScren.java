@@ -69,10 +69,11 @@ public class SplashScren extends AppCompatActivity implements Runnable{
                     }
                 }
             });
+        }else{
+            Log.v("SPLASH","Splash sendo executada.");
+            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+            //Iniciando a activity da tela de login.
+            finish(); // finalizando a activity atual.
         }
-        Log.v("SPLASH","Splash sendo executada.");
-        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
-        //Iniciando a activity da tela de login.
-        finish(); // finalizando a activity atual.
     }
 }
